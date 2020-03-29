@@ -117,9 +117,9 @@ def yargy_parser(path):
     line = text
 
     #Temporary workaround. Fix it to site by site processing later
-    n = 500
-    text = [line[i-5 if i-5 > 0 else 0:i+n+5 if i+n+5 < len(line)
-                 else len(line) -1] for i in range(0, len(line), n)]
+    num_c = 500
+    text = [line[i-5 if i-5 > 0 else 0: i + num_c + 5 if i + num_c + 5 < len(line)
+                 else len(line) -1] for i in range(0, len(line), num_c)]
     MEASURE = rule(or_(X_avail, NAME_avail, X_mttr, X_mtbf, NAME_mttr, NAME_mtbf))
     new_line = []
     #Parser #1 text preprocessing
@@ -160,7 +160,6 @@ def yargy_parser(path):
 
 
 def finding_num(b):
-
     names_mtbf = ['mtbf',
                   'mean time between',
                   'mean time between failures',
@@ -212,7 +211,6 @@ def finding_num(b):
             except:
                 del b[i].num[len(b[i].num)-1]
                 b[i].num = int(''.join(b[i].num))
-
         print(b[i].name, b[i].num)
         try:
             dict_num[b[i].name][b[i].num] += 1
@@ -223,6 +221,14 @@ def finding_num(b):
     for name in dict_num:
         for num in dict_num[name]:
             if dict_num[name][num] > dict_max_num[name]:
-                dict_max_num[name] = dict_num[name][num]
-                dict_max[name] = num
+                checker = False
+                if (name == 'MTTR' and num < 100 and num > 0):
+                    checker = True
+                if (name == 'MTBF' and num > 100000):
+                    checker = True
+                if (name == 'System Reliability' and num < 1 and num > 0):
+                    checker = True
+                if checker:
+                    dict_max_num[name] = dict_num[name][num]
+                    dict_max[name] = num
     return dict_max
