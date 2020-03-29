@@ -160,6 +160,7 @@ def yargy_parser(path):
 
 
 def finding_num(b):
+
     names_mtbf = ['mtbf',
                   'mean time between',
                   'mean time between failures',
@@ -211,6 +212,7 @@ def finding_num(b):
             except:
                 del b[i].num[len(b[i].num)-1]
                 b[i].num = int(''.join(b[i].num))
+
         print(b[i].name, b[i].num)
         try:
             dict_num[b[i].name][b[i].num] += 1
